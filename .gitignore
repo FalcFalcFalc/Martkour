@@ -1,0 +1,18 @@
+# Ignore Everything
+/*
+
+# Except for these:
+
+# empty-unity
+!/.gitignore
+!/Assets
+!/Packages
+!/ProjectSettings
+
+# vscode-unity
+!/NuGet
+!/vscode
+!/omnisharp.json
+
+# Modules
+!/Modules
