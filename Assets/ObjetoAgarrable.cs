@@ -2,27 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//[RequireComponent (typeof(Outline))]
 public class ObjetoAgarrable : MonoBehaviour
 {
-    //Outline ol;
-    // Start is called before the first frame update
+    Quaternion rotOrig;
+
     void Start()
     {
-        //ol = GetComponent<Outline>();
+        rotOrig = transform.rotation;
     }
 
-    bool selected = false;
+    bool selected = false, agarrado = false, reorientando = false;
 
     public void ToggleOutline()
     {
         selected = !selected;
-        /*if (selected) {
-            Outline ol = gameObject.AddComponent<Outline>();
-            ol.OutlineColor = Color.yellow;
-            ol.OutlineWidth = 6;
-            ol.OutlineMode = Outline.Mode.OutlineAndSilhouette;
+    }
+
+    public void ToggleAgarrar()
+    {
+        agarrado = !agarrado;
+        if(agarrado) StartCoroutine(Reorientar());
+    }
+
+    IEnumerator Reorientar(){
+        reorientando = true;
+        Quaternion rotActual = transform.rotation;
+        float longitud = 20;
+        for (int i = 0; i < longitud; i++)
+        {
+            float easeado = Mathf.Cos(((i/longitud)*Mathf.PI)/2);
+                  easeado = 1 - easeado * easeado;
+            transform.rotation = Quaternion.Lerp(rotActual,rotOrig,easeado);
+            yield return new WaitForSeconds(1/longitud);
         }
-        else Destroy(GetComponent<Outline>());*/
+        reorientando = false;
+    }
+
+    void Update() {
+        if(agarrado && !reorientando && transform.rotation != rotOrig){
+            transform.rotation = rotOrig;
+        }
     }
 }

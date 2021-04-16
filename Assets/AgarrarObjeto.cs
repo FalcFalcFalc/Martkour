@@ -28,28 +28,30 @@ public class AgarrarObjeto : MonoBehaviour
     void ChequearAgarrar() {
         if(Physics.Raycast(transform.position,transform.forward,out rcAgarrar, 2.5f, mascaraAgarrables)){
 
-            ObjetoAgarrable target = rcAgarrar.transform.GetComponent<ObjetoAgarrable>();
+            Transform target = rcAgarrar.transform;
             if(agarrarAnterior != target)
             {
-                IntercambiarOutline(target);
+                //IntercambiarOutline(target.GetComponent<ObjetoAgarrable>());
             }
-            if(Input.GetMouseButtonDown(0)){
-                if (pickedUp == null) Agarrar(target);
-            }   
-            if(Input.GetMouseButtonUp(0)){
-                if (pickedUp != null) Soltar();
-            } 
+            if(Input.GetMouseButtonDown(0) && target.GetComponent<ObjetoAgarrable>() && pickedUp == null) 
+                Agarrar(target.GetComponent<ObjetoAgarrable>());
+            if(Input.GetMouseButtonUp(0) && pickedUp != null) {
+                Soltar(); 
+            }
         }
         else 
         {
-            IntercambiarOutline(null);
-            
+            //IntercambiarOutline(null);
+            if(pickedUp != null && Input.GetMouseButtonUp(0)) {
+                Soltar();
+            }
         }
     }
 
     void Agarrar(ObjetoAgarrable target){
         pickedUp = target.transform;
         pickedUp.GetComponent<Rigidbody>().isKinematic = true;
+        pickedUp.GetComponent<ObjetoAgarrable>().ToggleAgarrar();
         pickedUp.parent = transform;   
     }
 
@@ -57,6 +59,7 @@ public class AgarrarObjeto : MonoBehaviour
         pickedUp.parent = null;
         pickedUp.GetComponent<Rigidbody>().velocity = rigidBody.velocity;
         pickedUp.GetComponent<Rigidbody>().isKinematic = false;
+        pickedUp.GetComponent<ObjetoAgarrable>().ToggleAgarrar();
         pickedUp = null;
     }
 }
