@@ -44,8 +44,8 @@ public class FirstPersonCameraController : MonoBehaviour
 
         }
 
-        mouseX = Input.GetAxisRaw("Mouse X");
-        mouseY = Input.GetAxisRaw("Mouse Y");
+        mouseX = Input.GetAxis("Mouse X");
+        mouseY = Input.GetAxis("Mouse Y");
          
         yRotation += mouseX * sensX * multiplier;
         xRotation -= mouseY * sensY * multiplier;

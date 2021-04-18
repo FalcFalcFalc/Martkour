@@ -34,7 +34,7 @@ public class PlayerMovementController : MonoBehaviour
 
     void FixedUpdate()
     {
-        velo = QuitarY(rb.velocity).magnitude;
+        velo = FalcTools.NullY(rb.velocity).magnitude;
 
         inputs.x = Input.GetAxis("Horizontal");
         inputs.y = Input.GetAxis("Vertical");
@@ -52,7 +52,7 @@ public class PlayerMovementController : MonoBehaviour
         else
         {
             float momentumSalto = Vector3.Dot(target.normalized, rb.velocity.normalized);
-            momentumSalto = remap(momentumSalto,-1,1,0,1);
+            momentumSalto = FalcTools.Remap(momentumSalto,-1,1,0,1);
             momentumSalto *= momentumSalto;
             target *= momentumSalto * airSpeed;
         }
@@ -100,7 +100,7 @@ public class PlayerMovementController : MonoBehaviour
         fuerzaAcumulada = Mathf.Clamp(fuerzaAcumulada,0,tiempoDeAcumulado);
         float fuerzaEaseada = 1 - Mathf.Abs((1-fuerzaAcumulada/tiempoDeAcumulado)*(1-fuerzaAcumulada/tiempoDeAcumulado)*(1-fuerzaAcumulada/tiempoDeAcumulado));
                                             //imaginate usar pow(x,y) kjjj
-        fuerzaEaseada = remap(fuerzaEaseada, 0, 1, 1, alturaArrodillado);
+        fuerzaEaseada = FalcTools.Remap(fuerzaEaseada, 0, 1, 1, alturaArrodillado);
         transform.localScale = new Vector3(1, fuerzaEaseada, 1);
     }
 
@@ -111,7 +111,7 @@ public class PlayerMovementController : MonoBehaviour
         }
         if(Input.GetKeyUp(teclaSalto)){
             if(enElPiso){
-                fuerzaAcumulada = remap(fuerzaAcumulada,0,tiempoDeAcumulado,1f,potenciaSaltoCargado);
+                fuerzaAcumulada = FalcTools.Remap(fuerzaAcumulada,0,tiempoDeAcumulado,1f,potenciaSaltoCargado);
                 Saltar(altitudDeSalto * fuerzaAcumulada);
             }
             LeanTween.scale(transform.gameObject,Vector3.one,.25f).setEase(LeanTweenType.easeOutBack);
@@ -212,9 +212,9 @@ public class PlayerMovementController : MonoBehaviour
             soltoElBoton = false;
             pesoAnterior = rb.mass;
             rb.mass = pesoTarget;
-            Vector3 dir =   pesoDirecciones.x * (QuitarY(rb.velocity)) +
-                            pesoDirecciones.y * (QuitarY(orientacion.forward));
-            rb.AddForce(dir.normalized/2 * (QuitarY(rb.velocity)+Vector3.up * rb.velocity.y/2).sqrMagnitude * conversionVelocidad,ForceMode.Impulse);
+            Vector3 dir =   pesoDirecciones.x * (FalcTools.NullY(rb.velocity)) +
+                            pesoDirecciones.y * (FalcTools.NullY(orientacion.forward));
+            rb.AddForce(dir.normalized/2 * (FalcTools.NullY(rb.velocity)+Vector3.up * rb.velocity.y/2).sqrMagnitude * conversionVelocidad,ForceMode.Impulse);
         }
     }
 
@@ -296,7 +296,7 @@ public class PlayerMovementController : MonoBehaviour
     int contactosPared = 0;
 
     void OnCollisionEnter(Collision other) {
-        if(((1 << other.gameObject.layer) & maskParedes) != 0){
+        if(FalcTools.IsGameObjectInLayerMask(other.gameObject, maskParedes)){
             contactosPared++;
             ActualizarVectorPared(other);
         }
@@ -323,7 +323,7 @@ public class PlayerMovementController : MonoBehaviour
     }
 
     void OnCollisionExit(Collision other) {
-        if(((1 << other.gameObject.layer) & maskParedes) != 0){
+        if(FalcTools.IsGameObjectInLayerMask(other.gameObject, maskParedes)){
             contactosPared--;
             ActualizarVectorPared(other);
         }
@@ -364,7 +364,7 @@ public class PlayerMovementController : MonoBehaviour
 
         tiempoCorriendo = Mathf.Clamp(tiempoCorriendo,0,tiempoParaFullSprint);
        
-        return remap(tiempoCorriendo, 0, tiempoParaFullSprint, 1, sprintMultiplier);
+        return FalcTools.Remap(tiempoCorriendo, 0, tiempoParaFullSprint, 1, sprintMultiplier);
     }
 
     [Header("Piso")]
@@ -427,21 +427,5 @@ public class PlayerMovementController : MonoBehaviour
         //Debug Escalera
         if (escalerasRayHit1.transform) Gizmos.DrawLine(checkContraPared.position,escalerasRayHit1.point);
         if (escalerasRayHit2.transform) Gizmos.DrawLine(checkContraPared.position + Vector3.up * stepHeight, escalerasRayHit2.point);
-    }
-
-    float remap(float x, float a, float b, float c, float d)
-    { //Besto Equation <3
-        if(b-a != 0){
-            return c + (d-c)*(x-a)/(b-a);
-        }
-        else
-        {
-            return float.NaN;
-        }
-    }
-
-    Vector3 QuitarY(Vector3 value)
-    { //Esta es copada tambien
-        return value - value.y * Vector3.up;
     }
 }
