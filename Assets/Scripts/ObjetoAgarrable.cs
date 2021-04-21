@@ -42,5 +42,8 @@ public class ObjetoAgarrable : MonoBehaviour
         if(agarrado && !reorientando && transform.rotation != rotOrig){
             transform.rotation = rotOrig;
         }
+        if(transform.position.y < -2){
+            print(name + " se cayo: " + GetComponent<Rigidbody>().isKinematic);
+        }
     }
 }

@@ -95,11 +95,14 @@ public class Interactuar : MonoBehaviour
     }
 
     void Soltar(){
-        pickedUp.parent = null;
         pickedUp.GetComponent<Rigidbody>().velocity = rigidBody.velocity;
         pickedUp.GetComponent<Rigidbody>().isKinematic = false;
-        if(!puerta) pickedUp.GetComponent<ObjetoAgarrable>().ToggleAgarrar();
+        if(!puerta) {
+            pickedUp.GetComponent<ObjetoAgarrable>().ToggleAgarrar();
+            pickedUp.parent = null;
+        }
         pickedUp = null;
+
         puerta = false;
         fpcc.enabled = true;
     }
